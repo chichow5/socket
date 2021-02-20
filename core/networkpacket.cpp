@@ -8,7 +8,7 @@
 
 #include "networkpacket.h"
 
-Header::Header(int payloadInfo_length=STRLEN){
+Header::Header(int payloadInfo_length){
 	length = H_LEN + payloadInfo_length;
 	version = 1;
 	payloadFlag = 0;
@@ -26,6 +26,7 @@ void Header::setPayloadInfo(char *str){
 		payloadInfo = (char*)malloc((strlen(str)+10) * sizeof(char));
 	}
 	strcpy(payloadInfo, str);
+	length = H_LEN + strlen(str);
 }
 
 void Header::setPayloadInfo(std::string &str){
@@ -33,6 +34,7 @@ void Header::setPayloadInfo(std::string &str){
 		payloadInfo = (char*)malloc((str.length()+10) * sizeof(char));
 	}
 	strcpy(payloadInfo, str.c_str());
+	length = H_LEN + str.length();
 }
 
 void Header::setPayloadSize(int len){

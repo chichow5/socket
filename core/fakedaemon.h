@@ -15,6 +15,6 @@
 #include "networkpacket.h"
 #include "transferstuff.h"
 
-void daemon();
+void daemon(int port);
 
 #endif //_FAKEDAEMON_H

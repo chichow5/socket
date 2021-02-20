@@ -21,7 +21,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-int setupClient(struct sockaddr_in *servaddr, char *ip, int *sockfd);
+int setupClient(struct sockaddr_in *servaddr, char *ip, int port, int *sockfd);
 
 int Socket(int __domain, int __type, int __protocol);
 
