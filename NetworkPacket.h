@@ -7,14 +7,8 @@ struct Header{
   unsigned char payloadFlag;
 };
 
-struct fileTransferJob{
+struct Payload{
   Header header;
   unsigned long long payloadSize;
-  char **payloadTransferInfo;
+  char **payloadTranferInfo;
 };
-
-struct FileTransferJob{
-  Header header;
-  unsigned long long payloadSize;
-  char **payloadTransferInfo;
-}
