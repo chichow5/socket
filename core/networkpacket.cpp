@@ -1,32 +1,57 @@
+/*
+ * networkpacket.cpp
+ * socket
+ *
+ * Created by Chi Chow on 2021-2-20
+ *
+*/
+
 #include "networkpacket.h"
 
-Header::Header(int content_length=STRLEN){
-  content = (char*)malloc(content_length * sizeof(char));
-  length = content_length+6;
+Header::Header(int payloadInfo_length=STRLEN){
+	length = H_LEN + payloadInfo_length;
+	version = 1;
+	payloadFlag = 0;
+
+	if (payloadSize == 0) payloadInfo = NULL;
+	else payloadInfo = (char*)malloc(payloadInfo_length * sizeof(char));
 }
 
 Header::~Header(){
-  free(content);
+	free(payloadInfo);
 }
 
-void Header::setContent(char *str){
-  strcpy(content, str);
+void Header::setPayloadInfo(char *str){
+	if(payloadInfo == NULL){
+		payloadInfo = (char*)malloc((strlen(str)+10) * sizeof(char));
+	}
+	strcpy(payloadInfo, str);
 }
 
-void Header::setContent(std::string &str){
-  strcpy(content, str.c_str());
+void Header::setPayloadInfo(std::string &str){
+	if(payloadInfo == NULL){
+		payloadInfo = (char*)malloc((str.length()+10) * sizeof(char));
+	}
+	strcpy(payloadInfo, str.c_str());
 }
 
-Payload::Payload(int payloadInfo_size=STRLEN){
-  payloadInfo = (char*)malloc(payloadInfo_size * sizeof(char));
+void Header::setPayloadSize(int len){
+	payloadFlag = 1;
+	payloadSize = len;
 }
 
-Payload::~Payload(){
-  free(payloadInfo);
+void Header::attachFile(char *path){
+	setPayloadSize(GetFileLength(path));
 }
-void Payload::setPayloadInfo(char *info){
-  strcpy(payloadInfo, info);
+
+void Header::attachFile(std::string& path){
+	setPayloadSize(GetFileLength(path.c_str()));
 }
-void Payload::setPayloadInfo(std::string& info){
-  strcpy(payloadInfo, info.c_str());
+
+void Header::attachText(char *content){
+	setPayloadSize(strlen(content));
+}
+
+void Header::attachText(std::string& content){
+	setPayloadSize(content.length());
 }

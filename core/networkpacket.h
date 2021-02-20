@@ -1,34 +1,45 @@
+/*
+ * networkpacket.h
+ * socket
+ *
+ * Created by Chi Chow on 2021-2-20
+ *
+*/
+
 #ifndef _NETWORKPACK_H
 #define _NETWORKPACK_H 1
 
 #define STRLEN 1024
+#define H_LEN 10
 
 #include <cstdio>
 #include <iostream>
 #include <cstring>
 #include <string>
+#include "bridge.h"
 
 struct Header{
-  unsigned long long length;
-  unsigned char version;
-  unsigned char payloadFlag;
-  char *content;
+	unsigned int  length;
+	unsigned char version;
+	unsigned char payloadFlag;
 
-  Header(int content_lenght=STRLEN);
-  ~Header();
+	unsigned int payloadSize;
+	char *payloadInfo;
 
-  void setContent(char *str);
-  void setContent(std::string &str);
-};
+	Header(int payloadInfo_lenght=STRLEN);
+	~Header();
 
-struct Payload{
-  unsigned long long payloadSize;
-  char *payloadInfo;
-  Payload(int payloadInfo_size=STRLEN);
-  ~Payload();
+	void setPayloadInfo(char *str);
+	void setPayloadInfo(std::string &str);
 
-  void setPayloadInfo(char *info);
-  void setPayloadInfo(std::string& info);
+	void setPayloadSize(int len);
+
+	void attachFile(char *path);
+	void attachFile(std::string& path);
+	 
+	void attachText(char *content);
+	void attachText(std::string& content);
+
 };
 
 #endif // _NETWORKPACK_H
