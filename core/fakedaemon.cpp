@@ -24,20 +24,23 @@ void daemon(int port){
     bind(listenfd, (SA *)&servaddr, sizeof(servaddr));
     listen(listenfd, 20);
 
+/*
     for( ; ; ){
         clilen = sizeof(cliaddr);
         connfd = accept(listenfd, (SA *)&cliaddr, &clilen);
         if ((childpid = fork()) == 0){
+            printf("connection from client...\n");
             close(listenfd);
 
-            Header header(0);
-            ReadByLength(connfd, H_LEN, &header);
-            if (header.length > H_LEN){
-                ReadByLength(connfd, header.length-H_LEN, header.payloadInfo);
-            }
-            printf("%s\n",header.payloadInfo);
+            Header header;//(0);
+            RecvHeader(connfd, &header);
+
+            header.payloadInfo[header.length-H_LEN] = 0;
+            header.show();
+            close(connfd);
             exit(0);
         }
         close(connfd);
     }
+    */
 }

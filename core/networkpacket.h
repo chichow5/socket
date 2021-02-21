@@ -19,14 +19,14 @@
 #include "bridge.h"
 
 struct Header{
-	unsigned int  length;
-	unsigned char version;
-	unsigned char payloadFlag;
+	int  length;
+	char version;
+	char payloadFlag;
 
-	unsigned int payloadSize;
+	int payloadSize;
 	char *payloadInfo;
 
-	Header(int payloadInfo_lenght=STRLEN);
+	Header(int infoLen=0);
 	~Header();
 
 	void setPayloadInfo(char *str);
@@ -40,6 +40,7 @@ struct Header{
 	void attachText(char *content);
 	void attachText(std::string& content);
 
+	void show();
 };
 
 #endif // _NETWORKPACK_H

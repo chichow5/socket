@@ -6,16 +6,25 @@
  *
 */
 
-#ifndef _FILETRANSFER_H
-#define _FILETRANSFER_H
+#ifndef _TRANSFER_STUFF_H
+#define _TRANSFER_STUFF_H
 
 #include <cstdio>
 #include <cstring>
 #include "basic.h"
+#include "networkpacket.h"
+#include "debug.h"
 
-int ReadByLength(int sockfd, int len, void *item);
+int RecvHeader(int sockfd, Header *header);
 
-int ReadToFile(int sockfd, int len, FILE *fp);
+int SendHeader(int sockfd, Header *header);
 
+int SendText(int sockfd, int len, char *sou);
 
-#endif //_FILETRANSFER_H
+int RecvText(int sockfd, int len, char *des);
+
+int SendFile(int sockfd, char *path);
+
+int RecvFile(int sockfd, int len, char *path);
+
+#endif //_TRANSFER_STUFF_H

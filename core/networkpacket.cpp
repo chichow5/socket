@@ -8,13 +8,13 @@
 
 #include "networkpacket.h"
 
-Header::Header(int payloadInfo_length){
-	length = H_LEN + payloadInfo_length;
+Header::Header(int infoLen){
+	length = H_LEN;
 	version = 1;
 	payloadFlag = 0;
-
-	if (payloadSize == 0) payloadInfo = NULL;
-	else payloadInfo = (char*)malloc(payloadInfo_length * sizeof(char));
+	payloadSize = 0;
+	if(infoLen == 0) payloadInfo = NULL;
+	else payloadInfo = (char *)malloc((infoLen+1) * sizeof(char));
 }
 
 Header::~Header(){
@@ -56,4 +56,11 @@ void Header::attachText(char *content){
 
 void Header::attachText(std::string& content){
 	setPayloadSize(content.length());
+}
+void Header::show(){
+	printf("int  length       %d\n", length);
+	printf("char version      %d\n", (int)version); 
+	printf("char payloadFlag  %d\n", (int)payloadFlag);
+	printf("int payloadSize   %d\n", payloadSize);
+	printf("char *payloadInfo %s\n", payloadInfo); 
 }
