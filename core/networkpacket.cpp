@@ -58,9 +58,9 @@ void Header::attachText(std::string& content){
 	setPayloadSize(content.length());
 }
 void Header::show(){
-	printf("int  length       %d\n", length);
-	printf("char version      %d\n", (int)version); 
-	printf("char payloadFlag  %d\n", (int)payloadFlag);
-	printf("int payloadSize   %d\n", payloadSize);
-	printf("char *payloadInfo %s\n", payloadInfo); 
+	printf("0x%x int  length       %d\n", &length, length);
+	printf("0x%x int payloadSize   %d\n", &payloadSize, payloadSize);
+	printf("0x%x char version      %d\n", &version, version); 
+	printf("0x%x char payloadFlag  %d\n", &payloadFlag, payloadFlag);
+	printf("0x%x char *payloadInfo %s\n", &payloadInfo, payloadInfo); 
 }

@@ -14,6 +14,9 @@
 #include "basic.h"
 #include "networkpacket.h"
 #include "debug.h"
+void RecvByLength(int connfd, int len, void *des);
+
+void SendByLength(int connfd, int len, void *sou);
 
 int RecvHeader(int sockfd, Header *header);
 

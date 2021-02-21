@@ -1,8 +1,7 @@
 #include "debug.h"
 
 void hexdump(void *item, int len){
-    unsigned char *tmp = (unsigned char*)malloc((len+1) * sizeof(char));
-    memcpy(tmp, item, len);
+    char *tmp = (char *)item;
     unsigned char t;
     printf("Hex Table");
     for (int i=0; i<len; i++){
@@ -15,5 +14,4 @@ void hexdump(void *item, int len){
         printf(" ");
     }
     puts("");
-    free(tmp);
 }

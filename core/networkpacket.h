@@ -20,10 +20,10 @@
 
 struct Header{
 	int  length;
+	int  payloadSize;
 	char version;
 	char payloadFlag;
 
-	int payloadSize;
 	char *payloadInfo;
 
 	Header(int infoLen=0);
