@@ -19,10 +19,10 @@ void RecvByLength(int connfd, int len, void *des){
 			remaining -= result;
 			received += result;
 		}else if (result == 0){
-			printf("Error remote close before receiving all data\n");
+			err_exit("remote close before receiving all data");
 			break;
 		}else{
-			printf("Error with read");
+			err_exit("failed to read from remote");
 			break;
 		}
 	}
@@ -39,99 +39,80 @@ void SendByLength(int connfd, int len, void *sou){
 			remaining -= result;
 			sent += result;
 		}else if (result < 0){
-			printf("Error write\n");
+			err_exit("failed to write to remote");
 			break;
 		}
 	}
 }
 
-int RecvHeader(int sockfd, Header *header){
+void RecvHeader(int sockfd, Header *header){
 	RecvByLength(sockfd, H_LEN, header);
 	RecvByLength(sockfd, header->length-H_LEN, header->payloadInfo);
-	return 0;
 }
 
-int SendHeader(int sockfd, Header *header){
+void SendHeader(int sockfd, Header *header){
 	SendByLength(sockfd, H_LEN, header);
 	SendByLength(sockfd, header->length-H_LEN, header->payloadInfo);
-	return 0;
 }
 
-int SendText(int sockfd, int len, char *sou){
+void SendText(int sockfd, int len, char *sou){
 	SendByLength(sockfd, len, sou);
 }
 
-int RecvText(int sockfd, int len, char *des){
+void RecvText(int sockfd, int len, char *des){
 	RecvByLength(sockfd, len, des);
 }
 
-int SendFile(int sockfd, char *path){
+void SendFile(int sockfd, char *path){
 	FILE *fp;
-	if ((fp = fopen(path, "rb")) == NULL){
-		printf("File open error when send\n");
-		//error code here
-		exit(0);
-	}
-
 	char *buf;
-	buf = (char *)malloc((MAXLINE+10) * sizeof(char));
-
-	int file_length = GetFileLength(path);
-	int willsend, rc,i;
-
-	for (i=0; i<file_length; i+=MAXLINE){
-		willsend = file_length-i;
-		if (willsend > MAXLINE) willsend = MAXLINE;
-		if ((rc = fread(buf, willsend, 1, fp)) < 0){
-			printf("File read error when sending\n");
-			exit(0);
+	if ((buf = (char*)malloc((MAXLINE+10) * sizeof(char))) == NULL){
+		err_exit("failed to ask for memory for sending buff");
+	}
+	int have_read = 0;
+	int remaining = GetFileLength(path);
+	if ((fp = fopen(path, "rb")) == NULL){
+		err_exit("failed to open file, %s",path);
+	}
+	while(remaining > 0){
+		have_read = fread(buf, sizeof(char), remaining>MAXLINE?MAXLINE:remaining, fp);
+		if (have_read < 0){
+			err_exit("failed to read from file, %s",path);
 		}
-		//if (rc == 0) break;
-		int cnt = 0;
-		while((rc = write(sockfd, buf+cnt, willsend-cnt)) > 0){
-			if (rc < 0) break;
-			cnt += rc;
-			if (cnt >= willsend) break;
+		if (have_read == 0){
+			err_exit("no content read from file");
 		}
-		if (rc < 0){
-			printf("File send error, write return negative\n");
-			exit(0);
-		}
-		if (cnt < willsend){
-			printf("File send error, length too short\n");
-			exit(0);
-		}
+		SendByLength(sockfd, have_read, buf);
+		remaining -= have_read;
 	}
 	fclose(fp);
-	return 0;
+	free(buf);
 }
 
-int RecvFile(int sockfd, int len, char *path){
+void RecvFile(int sockfd, int len, char *path){
 	FILE *fp;
-	if ((fp = fopen(path, "w")) == NULL){
-		printf("Output file opened error before receiving\n");
-		exit(0);
+	if ((fp = fopen(path, "wb")) == NULL){
+		err_exit("failed to create file, %s",path);
 	}
 	char *buf;
-	buf = (char*)malloc((MAXLINE+10) * sizeof(char));
-	int rc, cnt=0;
-	while((rc = read(sockfd, buf, MAXLINE)) > 0){
-		cnt += rc;
-		if (cnt > len){
-			printf("File receiving error, length overflow\n");
-			exit(0);
+	if ((buf = (char*)malloc((MAXLINE+10) * sizeof(char))) == NULL){
+		err_exit("failed to ask for memory for receiving buff");
+	}
+	int remaining = len;
+	int result = 0;
+	while(remaining > 0){
+		result = read(sockfd, buf, remaining>MAXLINE?MAXLINE:remaining);
+		if (result > 0){
+			remaining -= result;
+			if (fwrite(buf, result, 1, fp) < 0){
+				err_exit("failed to write received buffer");
+			}
+		}else if (result == 0){
+			err_exit("socket closed before receiving all data");
+		}else{
+			err_exit("failed to read when receiving");
 		}
-		fwrite(buf, rc, 1, fp);
-		if (cnt == len) break;
 	}
-	if (rc < 0){
-		printf("File receive error, read return negative\n");
-	}
-	if (cnt != len){
-		printf("File receive error, length not match\n");
-		printf("\tgot:%d, expected:%d\n",cnt, len);
-		exit(0);
-	}
+	free(buf);
 	fclose(fp);
-	return 0;
 }

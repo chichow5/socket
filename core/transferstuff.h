@@ -14,20 +14,16 @@
 #include "basic.h"
 #include "networkpacket.h"
 #include "debug.h"
+
 void RecvByLength(int connfd, int len, void *des);
 
 void SendByLength(int connfd, int len, void *sou);
 
-int RecvHeader(int sockfd, Header *header);
-
-int SendHeader(int sockfd, Header *header);
-
-int SendText(int sockfd, int len, char *sou);
-
-int RecvText(int sockfd, int len, char *des);
-
-int SendFile(int sockfd, char *path);
-
-int RecvFile(int sockfd, int len, char *path);
+void RecvHeader(int sockfd, Header *header);
+void SendHeader(int sockfd, Header *header);
+void SendText(int sockfd, int len, char *sou);
+void RecvText(int sockfd, int len, char *des);
+void SendFile(int sockfd, char *path);
+void RecvFile(int sockfd, int len, char *path);
 
 #endif //_TRANSFER_STUFF_H

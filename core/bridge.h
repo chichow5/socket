@@ -10,6 +10,7 @@
 #define _BRIDGE_H 1
 
 #include <cstdio>
+#include "basic.h"
 
 int GetFileLength(const char *path);
 
