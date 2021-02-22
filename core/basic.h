@@ -26,7 +26,7 @@ void err_msg(const char *fmt, ...);
 
 void err_exit(const char *fmt, ...);
 
-void setupClient(struct sockaddr_in *servaddr, char *ip, int port, int *sockfd);
+void SetupClient(struct sockaddr_in *servaddr, char *ip, int port, int *sockfd);
 
 int Socket(int __domain, int __type, int __protocol);
 

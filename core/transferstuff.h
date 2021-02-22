@@ -9,8 +9,6 @@
 #ifndef _TRANSFER_STUFF_H
 #define _TRANSFER_STUFF_H
 
-#include <cstdio>
-#include <cstring>
 #include "basic.h"
 #include "networkpacket.h"
 #include "debug.h"

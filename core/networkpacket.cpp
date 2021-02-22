@@ -14,7 +14,11 @@ Header::Header(int infoLen){
 	payloadFlag = 0;
 	payloadSize = 0;
 	if(infoLen == 0) payloadInfo = NULL;
-	else payloadInfo = (char *)malloc((infoLen+1) * sizeof(char));
+	else{
+		if ((payloadInfo = (char *)malloc((infoLen+1) * sizeof(char))) ==NULL){
+			err_exit("failed to initial header");
+		}
+	}
 }
 
 Header::~Header(){
@@ -23,7 +27,9 @@ Header::~Header(){
 
 void Header::setPayloadInfo(char *str){
 	if(payloadInfo == NULL){
-		payloadInfo = (char*)malloc((strlen(str)+10) * sizeof(char));
+		if ((payloadInfo = (char *)malloc((strlen(str)+10) * sizeof(char))) ==NULL){
+			err_exit("failed to initial header.payloadInfo");
+		}
 	}
 	strcpy(payloadInfo, str);
 	length = H_LEN + strlen(str);
@@ -31,7 +37,9 @@ void Header::setPayloadInfo(char *str){
 
 void Header::setPayloadInfo(std::string &str){
 	if(payloadInfo == NULL){
-		payloadInfo = (char*)malloc((str.length()+10) * sizeof(char));
+		if ((payloadInfo = (char *)malloc((str.length()+10) * sizeof(char))) ==NULL){
+			err_exit("failed to initial header.payloadInfo");
+		}
 	}
 	strcpy(payloadInfo, str.c_str());
 	length = H_LEN + str.length();
@@ -57,6 +65,7 @@ void Header::attachText(char *content){
 void Header::attachText(std::string& content){
 	setPayloadSize(content.length());
 }
+
 void Header::show(){
 	printf("0x%x int  length       %d\n", &length, length);
 	printf("0x%x int payloadSize   %d\n", &payloadSize, payloadSize);

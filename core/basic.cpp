@@ -26,7 +26,7 @@ void err_exit(const char *fmt, ...){
 	exit(EXIT_FAILURE);
 }
 
-void setupClient(struct sockaddr_in *servaddr, char *ip, int port, int *sockfd){
+void SetupClient(struct sockaddr_in *servaddr, char *ip, int port, int *sockfd){
     *sockfd = socket(AF_INET, SOCK_STREAM, 0);
     memset(servaddr, 0, sizeof(servaddr));
     servaddr->sin_family = AF_INET;

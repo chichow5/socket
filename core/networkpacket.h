@@ -12,11 +12,8 @@
 #define STRLEN 1024
 #define H_LEN 10
 
-#include <cstdio>
-#include <iostream>
-#include <cstring>
-#include <string>
 #include "bridge.h"
+#include "basic.h"
 
 struct Header{
 	int  length;
