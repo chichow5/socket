@@ -5,3 +5,4 @@ server*
 client*
 main.exe
 build/
+CMakeSettings.json
