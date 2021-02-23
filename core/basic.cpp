@@ -5,7 +5,7 @@
  * Created by Chi Chow on 2021-2-20
  *
 */
-
+#ifndef _WIN32
 #include "basic.h"
 void err_msg(const char *fmt, ...){
 	fprintf(stderr, "Error : %s ",strerror(errno));
@@ -69,3 +69,4 @@ int Accept(int __fd, __SOCKADDR_ARG __addr, socklen_t *__restrict __addr_len)
 	}
 	return re;
 }
+#endif // _WIN32

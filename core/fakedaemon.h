@@ -10,8 +10,12 @@
 #define _FAKEDAEMON_H 1
 
 #include <cstdio>
+#ifndef _WIN32
 #include <bits/types.h>
 #include "basic.h"
+#else
+#include "winbasic.h"
+#endif
 #include "networkpacket.h"
 #include "transferstuff.h"
 

@@ -8,13 +8,17 @@
 
 #include "transferstuff.h"
 
-void RecvByLength(int connfd, int len, void *des){
+void RecvByLength(SOCKET connfd, int len, void *des){
 	char *recv_buff=(char*)des;
 	int remaining = len;
 	int received = 0;
 	int result = 0;
 	while(remaining > 0){
+#ifndef _WIN32
 		result = read(connfd, recv_buff+received, remaining>MAXLINE?MAXLINE:remaining);
+#else
+		result = recv(connfd, recv_buff + received, remaining > MAXLINE ? MAXLINE : remaining, NULL);
+#endif
 		if (result > 0){
 			remaining -= result;
 			received += result;
@@ -28,13 +32,17 @@ void RecvByLength(int connfd, int len, void *des){
 	}
 }
 
-void SendByLength(int connfd, int len, void *sou){
+void SendByLength(SOCKET connfd, int len, void *sou){
 	char *tosend = (char*)sou;
 	int remaining = len;
 	int sent = 0;
 	int result = 0;
 	while(remaining > 0){
+#ifndef _WIN32
 		result = write(connfd, tosend+sent, remaining>MAXLINE?MAXLINE:remaining);
+#else
+		result = send(connfd, tosend + sent, remaining > MAXLINE ? MAXLINE : remaining, NULL);
+#endif
 		if (result > 0){
 			remaining -= result;
 			sent += result;
@@ -45,25 +53,25 @@ void SendByLength(int connfd, int len, void *sou){
 	}
 }
 
-void RecvHeader(int sockfd, Header *header){
+void RecvHeader(SOCKET sockfd, Header *header){
 	RecvByLength(sockfd, H_LEN, header);
 	RecvByLength(sockfd, header->length-H_LEN, header->payloadInfo);
 }
 
-void SendHeader(int sockfd, Header *header){
+void SendHeader(SOCKET sockfd, Header *header){
 	SendByLength(sockfd, H_LEN, header);
 	SendByLength(sockfd, header->length-H_LEN, header->payloadInfo);
 }
 
-void SendText(int sockfd, int len, char *sou){
+void SendText(SOCKET sockfd, int len, char *sou){
 	SendByLength(sockfd, len, sou);
 }
 
-void RecvText(int sockfd, int len, char *des){
+void RecvText(SOCKET sockfd, int len, char *des){
 	RecvByLength(sockfd, len, des);
 }
 
-void SendFile(int sockfd, char *path){
+void SendFile(SOCKET sockfd, char *path){
 	FILE *fp;
 	char *buf;
 	if ((buf = (char*)malloc((MAXLINE+10) * sizeof(char))) == NULL){
@@ -89,7 +97,7 @@ void SendFile(int sockfd, char *path){
 	free(buf);
 }
 
-void RecvFile(int sockfd, int len, char *path){
+void RecvFile(SOCKET sockfd, int len, char *path){
 	FILE *fp;
 	if ((fp = fopen(path, "wb")) == NULL){
 		err_exit("failed to create file, %s",path);
@@ -101,7 +109,11 @@ void RecvFile(int sockfd, int len, char *path){
 	int remaining = len;
 	int result = 0;
 	while(remaining > 0){
+#ifndef _WIN32
 		result = read(sockfd, buf, remaining>MAXLINE?MAXLINE:remaining);
+#else
+		result = recv(sockfd, buf, remaining > MAXLINE ? MAXLINE : remaining, NULL);
+#endif
 		if (result > 0){
 			remaining -= result;
 			if (fwrite(buf, result, 1, fp) < 0){

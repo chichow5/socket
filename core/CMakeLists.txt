@@ -1,3 +1,5 @@
-aux_source_directory(. DIR_LIB_SRCS)
-
-add_library(corefun ${DIR_LIB_SRCS})
+if (WIN32)
+add_library(corefun winbasic.cpp winbasic.h bridge.cpp bridge.h CMakeLists.txt debug.cpp debug.h fakedaemon.cpp fakedaemon.h networkpacket.cpp networkpacket.h transferstuff.cpp transferstuff.h)
+elseif(UNIX)
+add_library(corefun basic.cpp basic.h bridge.cpp bridge.h CMakeLists.txt debug.cpp debug.h fakedaemon.cpp fakedaemon.h networkpacket.cpp networkpacket.h transferstuff.cpp transferstuff.h)
+endif ()

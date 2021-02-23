@@ -1,6 +1,7 @@
 .vscode/
 *.a
+.vs/
 server*
 client*
-main*
+main.exe
 build/
