@@ -13,7 +13,11 @@
 #define H_LEN 10
 
 #include "bridge.h"
+#ifndef _WIN32
 #include "basic.h"
+#else
+#include "winbasic.h"
+#endif
 
 struct Header{
 	int  length;

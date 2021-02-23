@@ -6,6 +6,8 @@
  *
 */
 
+#ifndef _WIN32
+
 #ifndef _BASIC_H
 #define _BASIC_H 1
 
@@ -13,6 +15,9 @@
 #define PORT 54123
 #define SA struct sockaddr
 #define MAXLINE 4096
+
+
+#define SOCKET int
 
 #include <cstdio>
 #include <cstring>
@@ -38,3 +43,5 @@ int Accept(int __fd, __SOCKADDR_ARG __addr, socklen_t *__restrict __addr_len);
 
 
 #endif //_BASIC_H
+
+#endif // _WIN32

@@ -11,7 +11,7 @@
 void daemon(int port){
     int     listenfd, connfd;
     int     childpid;
-    ssize_t n;
+//    ssize_t n;
 
     socklen_t clilen;
     struct sockaddr_in cliaddr, servaddr;

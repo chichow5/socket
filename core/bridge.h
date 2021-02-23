@@ -9,7 +9,11 @@
 #ifndef _BRIDGE_H
 #define _BRIDGE_H 1
 
+#ifndef _WIN32
 #include "basic.h"
+#else
+#include "winbasic.h"
+#endif
 
 int GetFileLength(const char *path);
 
