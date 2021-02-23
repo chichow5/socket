@@ -100,6 +100,7 @@ void SendFile(SOCKET sockfd, char *path){
 }
 
 void RecvFile(SOCKET sockfd, int len, char *path){
+
 	FILE *fp;
 	if ((fp = fopen(path, "wb")) == NULL){
 		err_exit("failed to create file, %s",path);

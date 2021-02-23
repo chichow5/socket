@@ -11,10 +11,14 @@
 
 #ifndef _WIN32
 #include "basic.h"
+#include <unistd.h>
 #else
 #include "winbasic.h"
+#include <io.h>
 #endif
 
 int GetFileLength(const char *path);
+
+int ResolveFileName(const char *path);
 
 #endif //_BRIDGE_H 1

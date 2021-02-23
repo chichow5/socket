@@ -12,6 +12,12 @@
 #define STRLEN 1024
 #define H_LEN 10
 
+#define FLAG_NONE 0		//无payload标志
+#define FLAG_FILE 1<<0	//文件标志
+#define FLAG_TEXT 1<<1	//文本标志
+#define FLAG_CLIP 1<<2	//剪贴板标志
+#define FLAG_NUM 3
+
 #include "bridge.h"
 #ifndef _WIN32
 #include "basic.h"
@@ -27,19 +33,19 @@ struct Header{
 
 	char *payloadInfo;
 
-	Header(int infoLen=0);
+	Header(int infoLen=MAXLINE);
 	~Header();
 
 	void setPayloadInfo(char *str);
 	void setPayloadInfo(std::string &str);
 
-	void setPayloadSize(int len);
+	void setPayloadSize(int len, char flag);
 
-	void attachFile(char *path);
-	void attachFile(std::string& path);
+	void attachFile(char *path, char flag);
+	void attachFile(std::string& path, char flag);
 	 
-	void attachText(char *content);
-	void attachText(std::string& content);
+	void attachText(char *content, char flag);
+	void attachText(std::string& content, char flag);
 
 	void show();
 };
