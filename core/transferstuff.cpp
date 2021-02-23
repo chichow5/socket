@@ -56,6 +56,8 @@ void SendByLength(SOCKET connfd, int len, void *sou){
 void RecvHeader(SOCKET sockfd, Header *header){
 	RecvByLength(sockfd, H_LEN, header);
 	RecvByLength(sockfd, header->length-H_LEN, header->payloadInfo);
+	header->payloadInfo[header->length - H_LEN] = 0;
+	//set char string end flag
 }
 
 void SendHeader(SOCKET sockfd, Header *header){

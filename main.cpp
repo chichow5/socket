@@ -9,6 +9,8 @@
 #include "core/transferstuff.h"
 #include "core/debug.h"
 
+//#define DEBUG 1
+
 char ip[20];
 int port;
 char buf[BUFFSIZE];
@@ -65,12 +67,18 @@ int main(int args, char **argv){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
+
+#ifndef DEBUG
 	if(args == 1) return 0;
 	if (strcmp(argv[1], "s") == 0){
 		server();
 	}else if (strcmp(argv[1], "c") == 0){
 		client();
 	}
+#else
+	server();
+#endif
+
 #ifdef _WIN32
 	WSACleanup();
 #endif

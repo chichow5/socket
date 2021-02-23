@@ -61,7 +61,7 @@ int Connect(SOCKET s, const struct sockaddr* name, int namelen) {
 
 SOCKET Accept(SOCKET s, struct sockaddr* addr, int* addrlen) {
 	SOCKET re;
-	if ((re = Accept(s, addr, addrlen)) < 0) {
+	if ((re = accept(s, addr, addrlen)) < 0) {
 		err_exit("failed to accept");
 	}
 	return re;
