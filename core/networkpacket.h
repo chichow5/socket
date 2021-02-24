@@ -41,8 +41,8 @@ struct Header{
 
 	void setPayloadSize(int len, char flag);
 
-	void attachFile(char *path, char flag);
-	void attachFile(std::string& path, char flag);
+	void attachFile(char *path);
+	void attachFile(std::string& path);
 	 
 	void attachText(char *content, char flag);
 	void attachText(std::string& content, char flag);
