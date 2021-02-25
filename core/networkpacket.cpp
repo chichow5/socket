@@ -67,12 +67,12 @@ void Header::setPayloadSize(int len, char flag){
 	payloadSize = len;
 }
 
-void Header::attachFile(char *path, char flag){
-	setPayloadSize(GetFileLength(path), flag);
+void Header::attachFile(char *path){
+	setPayloadSize(GetFileLength(path), FLAG_FILE);
 }
 
-void Header::attachFile(std::string& path, char flag){
-	setPayloadSize(GetFileLength(path.c_str()), flag);
+void Header::attachFile(std::string& path){
+	setPayloadSize(GetFileLength(path.c_str()), FLAG_FILE);
 }
 
 void Header::attachText(char *content, char flag){

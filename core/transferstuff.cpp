@@ -8,48 +8,40 @@
 
 #include "transferstuff.h"
 
-void RecvByLength(SOCKET connfd, int len, void *des){
-	char *recv_buff=(char*)des;
-	int remaining = len;
-	int received = 0;
-	int result = 0;
-	while(remaining > 0){
-#ifndef _WIN32
-		result = read(connfd, recv_buff+received, remaining>MAXLINE?MAXLINE:remaining);
-#else
-		result = recv(connfd, recv_buff + received, remaining > MAXLINE ? MAXLINE : remaining, NULL);
-#endif
-		if (result > 0){
-			remaining -= result;
-			received += result;
-		}else if (result == 0){
-			err_exit("remote close before receiving all data");
-			break;
-		}else{
-			err_exit("failed to read from remote");
-			break;
+void RecvByLength(SOCKET connfd, int len, void *vptr){
+	char *ptr=(char*)vptr;
+	int nleft = len;
+	int nread = 0;
+	while(nleft > 0){
+		if ((nread = recv(connfd, ptr, std::min(nleft, MAXLINE), MSG_WAITALL)) < 0){
+			if (errno == EINTR) nread = 0;
+			else{
+				err_exit("failed to read from remote");
+			}
+		}else if (nread == 0){
+			err_exit("read meet EOF");
 		}
+		nleft -= nread;
+		ptr   += nread;
 	}
 }
 
 void SendByLength(SOCKET connfd, int len, void *sou){
-	char *tosend = (char*)sou;
-	int remaining = len;
-	int sent = 0;
-	int result = 0;
-	while(remaining > 0){
-#ifndef _WIN32
-		result = write(connfd, tosend+sent, remaining>MAXLINE?MAXLINE:remaining);
-#else
-		result = send(connfd, tosend + sent, remaining > MAXLINE ? MAXLINE : remaining, NULL);
-#endif
-		if (result > 0){
-			remaining -= result;
-			sent += result;
-		}else if (result < 0){
-			err_exit("failed to write to remote");
+	char *ptr = (char*)sou;
+	int nleft = len;
+	int nsent = 0;
+	while(nleft > 0){
+		if ((nsent = send(connfd, ptr, std::min(nleft, MAXLINE), MSG_WAITALL)) < 0){
+			if (errno == EINTR) nsent = 0;
+			else{
+				err_exit("failed to send to remote");
+			}
+		}else if (nsent == 0){
+			err_msg("send return 0");
 			break;
 		}
+		nleft -= nsent;
+		ptr   += nsent;
 	}
 }
 
@@ -79,21 +71,20 @@ void SendFile(SOCKET sockfd, char *path){
 	if ((buf = (char*)malloc((MAXLINE+10) * sizeof(char))) == NULL){
 		err_exit("failed to ask for memory for sending buff");
 	}
-	int have_read = 0;
-	int remaining = GetFileLength(path);
+	int nread = 0;
+	int nleft = GetFileLength(path);
 	if ((fp = fopen(path, "rb")) == NULL){
-		err_exit("failed to open file, %s",path);
+		err_exit("failed to open sending file, %s",path);
 	}
-	while(remaining > 0){
-		have_read = fread(buf, sizeof(char), remaining>MAXLINE?MAXLINE:remaining, fp);
-		if (have_read < 0){
+	while(nleft > 0){
+		if ((nread = fread(buf, sizeof(char), std::min(nleft, MAXLINE), fp)) < 0){
 			err_exit("failed to read from file, %s",path);
+		}else if (nread == 0){
+			err_msg("no content read from file");
+			break;
 		}
-		if (have_read == 0){
-			err_exit("no content read from file");
-		}
-		SendByLength(sockfd, have_read, buf);
-		remaining -= have_read;
+		SendByLength(sockfd, nread, buf);
+		nleft -= nread;
 	}
 	fclose(fp);
 	free(buf);
@@ -109,23 +100,22 @@ void RecvFile(SOCKET sockfd, int len, char *path){
 	if ((buf = (char*)malloc((MAXLINE+10) * sizeof(char))) == NULL){
 		err_exit("failed to ask for memory for receiving buff");
 	}
-	int remaining = len;
-	int result = 0;
-	while(remaining > 0){
-#ifndef _WIN32
-		result = read(sockfd, buf, remaining>MAXLINE?MAXLINE:remaining);
-#else
-		result = recv(sockfd, buf, remaining > MAXLINE ? MAXLINE : remaining, NULL);
-#endif
-		if (result > 0){
-			remaining -= result;
-			if (fwrite(buf, result, 1, fp) < 0){
-				err_exit("failed to write received buffer");
-			}
-		}else if (result == 0){
-			err_exit("socket closed before receiving all data");
-		}else{
-			err_exit("failed to read when receiving");
+	int nleft = len;
+	int nread = 0;
+	while(nleft > 0){
+		if ((nread = recv(sockfd, buf, std::min(nleft, MAXLINE), MSG_WAITALL)) < 0){
+			if (errno == EINTR) nread = 0;
+			else{
+				err_exit("failed to read to write to file");
+			} 
+		}else if (nread == 0){
+			err_msg("read meet EOF when receiving file");
+			break;
+		}
+		if (nread == 0) continue;
+		nleft -= nread;
+		if (fwrite(buf, nread, 1, fp) < 0){
+			err_exit("failed to write received buffer to file");
 		}
 	}
 	free(buf);

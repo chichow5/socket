@@ -18,6 +18,7 @@
 
 
 #define SOCKET int
+#define closesocket close
 
 #include <cstdio>
 #include <cstring>
