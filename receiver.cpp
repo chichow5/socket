@@ -43,13 +43,13 @@ void Daemon(int port, char* folder){
             std::string path(folder);
             if (path[path.length()-1]!=92 && path[path.length()-1]!=47){
 #ifdef _WIN32
-            path.append("\\");
+                path.append("\\");
 #else
-            path.append("/");
+                path.append("/");
 #endif
-    }
-    path.append(header.payloadInfo);
-    header.setPayloadInfo(path);
+            }
+            path.append(header.payloadInfo);
+            header.setPayloadInfo(path);
             HeaderHandler(connfd, header);
             close(connfd);
             exit(EXIT_SUCCESS);
